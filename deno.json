@@ -1,6 +1,6 @@
 {
   "name": "@online/packager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "exports": "./mod.ts",
   "imports": {
     "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.9",
