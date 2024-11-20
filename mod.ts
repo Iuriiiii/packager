@@ -1,10 +1,10 @@
 import type {
   DeserializeFunction,
   DeserializeOptions,
-  SerializableClass,
   SerializeOptions,
   SerializerFunction,
 } from "@online/tinyserializer/types";
+import { SerializableClass } from "@online/tinyserializer/types";
 import {
   Database,
   deserialize,
@@ -16,7 +16,7 @@ import {
   uInt8ArraySerializer,
 } from "@online/tinyserializers";
 
-export { Serializable, type SerializableClass };
+export { Serializable, SerializableClass };
 
 export interface PackOptions {
   stringDatabaseKeyName: string;

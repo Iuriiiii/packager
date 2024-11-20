@@ -1,3 +1,7 @@
+# 0.0.4
+
+Remove `type` on `SerializableClass` and `Serializable` exports
+
 # 0.0.2
 
 Export `SerializableClass` abtraction
