@@ -16,6 +16,8 @@ import {
   uInt8ArrayDeserializer,
   uInt8ArraySerializer,
 } from "@online/tinyserializers";
+import { isArray } from "jsr:@online/is@^0.0.1";
+import { isUint8array } from "./src/mod.ts";
 
 export type { SerializedClass };
 export { Serializable, SerializableClass };
@@ -42,6 +44,10 @@ export function pack(
     sanitizedOptions,
   );
 
+  if (stringDatabase.isEmpty()) {
+    return serializedValue;
+  }
+
   const { value: serializedStringDatabase } = serialize(
     stringDatabase,
     { ...sanitizedOptions, plainText: true },
@@ -63,23 +69,33 @@ export function unpack<T>(
     );
   const sanitizedOptions = { ...options, deserializers };
 
-  const { value: unpacked } = deserialize<Uint8Array[]>(
+  const { value: unpacked } = deserialize<Uint8Array>(
     packed,
     sanitizedOptions,
   );
 
-  const [serializedStringDatabase, serializedValue] = unpacked;
-  const { value: deserializedStringDatabase } = deserialize<string[]>(
-    serializedStringDatabase,
-    sanitizedOptions,
-  );
+  if (
+    isArray(unpacked) &&
+    unpacked.length === 2 &&
+    isUint8array(unpacked[0]) &&
+    isUint8array(unpacked[1])
+  ) {
+    const [serializedStringDatabase, serializedValue] = unpacked;
 
-  const stringDatabase = new Database<string>(deserializedStringDatabase);
+    const { value: deserializedStringDatabase } = deserialize<string[]>(
+      serializedStringDatabase,
+      sanitizedOptions,
+    );
 
-  const { value } = deserialize<T>(serializedValue, {
-    stringDatabase,
-    ...sanitizedOptions,
-  });
+    const stringDatabase = new Database<string>(deserializedStringDatabase);
 
-  return value;
+    const { value } = deserialize<T>(serializedValue, {
+      stringDatabase,
+      ...sanitizedOptions,
+    });
+
+    return value;
+  }
+
+  return unpacked as T;
 }
