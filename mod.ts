@@ -1,6 +1,7 @@
 import type {
   DeserializeFunction,
   DeserializeOptions,
+  SerializedClass,
   SerializeOptions,
   SerializerFunction,
 } from "@online/tinyserializer/types";
@@ -16,6 +17,7 @@ import {
   uInt8ArraySerializer,
 } from "@online/tinyserializers";
 
+export type { SerializedClass };
 export { Serializable, SerializableClass };
 
 export interface PackOptions {
