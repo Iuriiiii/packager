@@ -1,10 +1,10 @@
 {
   "name": "@online/packager",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "exports": "./mod.ts",
   "imports": {
-    "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.9",
-    "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.2",
+    "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.10",
+    "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.3",
     "@std/assert": "jsr:@std/assert@1"
   }
 }
