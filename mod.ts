@@ -16,10 +16,10 @@ import {
   uInt8ArrayDeserializer,
   uInt8ArraySerializer,
 } from "@online/tinyserializers";
-import { isArray } from "jsr:@online/is@^0.0.1";
 import { isUint8array } from "./src/mod.ts";
+import { isArray } from "@online/is";
 
-export type { SerializedClass };
+export type { DeserializeFunction, SerializedClass, SerializerFunction };
 export { Serializable, SerializableClass };
 
 export interface PackOptions {
