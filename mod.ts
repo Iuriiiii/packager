@@ -1,6 +1,7 @@
 import type {
   DeserializeFunction,
   DeserializeOptions,
+  RequireAtLeastOne,
   SerializedClass,
   SerializeOptions,
   SerializerFunction,
@@ -19,7 +20,12 @@ import {
 import { isUint8array } from "./src/mod.ts";
 import { isArray } from "@online/is";
 
-export type { DeserializeFunction, SerializedClass, SerializerFunction };
+export type {
+  DeserializeFunction,
+  RequireAtLeastOne,
+  SerializedClass,
+  SerializerFunction,
+};
 export { Serializable, SerializableClass };
 
 export interface PackOptions {
