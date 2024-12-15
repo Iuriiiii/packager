@@ -3,9 +3,9 @@
   "version": "0.0.10",
   "exports": "./mod.ts",
   "imports": {
-    "@online/is": "jsr:@online/is@^0.0.x",
-    "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.x",
+    "@online/is": "jsr:@online/is@^0.0.2",
+    "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.17",
     "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.x",
-    "@std/assert": "jsr:@std/assert@1"
+    "@std/assert": "jsr:@std/assert@^1.0.9"
   }
 }
