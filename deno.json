@@ -1,6 +1,6 @@
 {
   "name": "@online/packager",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "exports": "./mod.ts",
   "imports": {
     "@online/is": "jsr:@online/is@^0.0.2",
