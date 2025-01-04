@@ -1,6 +1,8 @@
 import type {
+  Decoder,
   DeserializeFunction,
   DeserializeOptions,
+  Encoder,
   RequireAtLeastOne,
   SerializedClass,
   SerializeOptions,
@@ -21,7 +23,9 @@ import { isUint8array } from "./src/mod.ts";
 import { isArray } from "@online/is";
 
 export type {
+  Decoder,
   DeserializeFunction,
+  Encoder,
   RequireAtLeastOne,
   SerializedClass,
   SerializerFunction,
@@ -39,7 +43,7 @@ export function pack(
   options?: Partial<PackOptions & SerializeOptions>,
 ): Uint8Array {
   const serializers: SerializerFunction[] =
-    (options?.serializers ? options?.serializers : []).concat(
+    (options?.serializers ? options.serializers : []).concat(
       uInt8ArraySerializer,
     );
 
@@ -70,7 +74,7 @@ export function unpack<T>(
   options?: Partial<PackOptions & DeserializeOptions>,
 ): T {
   const deserializers: DeserializeFunction[] =
-    (options?.deserializers ? options?.deserializers : []).concat(
+    (options?.deserializers ? options.deserializers : []).concat(
       uInt8ArrayDeserializer,
     );
   const sanitizedOptions = { ...options, deserializers };

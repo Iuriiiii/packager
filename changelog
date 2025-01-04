@@ -1,3 +1,7 @@
+# 0.0.14
+
+Add support for encoding and decoding
+
 # 0.0.5
 
 Export `SerializedClass`
