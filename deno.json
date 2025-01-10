@@ -4,7 +4,7 @@
   "exports": "./mod.ts",
   "tasks": {
     "test": "deno test && bun test && npx tsx --test ./tests/*.test.ts",
-    "generate:ai-docs": "deno doc --json ./ai-docs.json"
+    "generate:ai-docs": "deno doc --json ./src > ./ai-docs.json"
   },
   "imports": {
     "@inspatial/test": "jsr:@inspatial/test@^0.0.7",
