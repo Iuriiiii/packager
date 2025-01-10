@@ -1,7 +1,6 @@
-
 /**
  * Checks if the provided value is an instance of Uint8Array.
- * 
+ *
  * @param value - The value to check.
  * @returns A boolean indicating whether the value is a Uint8Array.
  */

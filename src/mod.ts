@@ -1,41 +1,41 @@
 import type {
-    Decoder,
-    DeserializeFunction,
-    DeserializeOptions,
-    Encoder,
-    RequireAtLeastOne,
-    SerializedClass,
-    SerializeOptions,
-    SerializerFunction,
+  Decoder,
+  DeserializeFunction,
+  DeserializeOptions,
+  Encoder,
+  RequireAtLeastOne,
+  SerializedClass,
+  SerializeOptions,
+  SerializerFunction,
 } from "@online/tinyserializer/types";
 import { SerializableClass } from "@online/tinyserializer/types";
 import {
-    Database,
-    deserialize,
-    Serializable,
-    serialize,
+  Database,
+  deserialize,
+  Serializable,
+  serialize,
 } from "@online/tinyserializer";
 import {
-    uInt8ArrayDeserializer,
-    uInt8ArraySerializer,
+  uInt8ArrayDeserializer,
+  uInt8ArraySerializer,
 } from "@online/tinyserializers";
 import { isUint8array } from "./validators/mod.ts";
 import { isArray } from "@online/is";
 
 export type {
-    Decoder,
-    DeserializeFunction,
-    Encoder,
-    RequireAtLeastOne,
-    SerializedClass,
-    SerializerFunction,
+  Decoder,
+  DeserializeFunction,
+  Encoder,
+  RequireAtLeastOne,
+  SerializedClass,
+  SerializerFunction,
 };
 export { Serializable, SerializableClass };
 
 export interface PackOptions {
-    stringDatabaseKeyName: string;
-    objectDatabaseKeyName: string;
-    valueKeyName: string;
+  stringDatabaseKeyName: string;
+  objectDatabaseKeyName: string;
+  valueKeyName: string;
 }
 
 /**
@@ -49,34 +49,34 @@ export interface PackOptions {
  * @returns A Uint8Array containing the packed value.
  */
 export function pack(
-    value: unknown,
-    options?: Partial<PackOptions & SerializeOptions>,
+  value: unknown,
+  options?: Partial<PackOptions & SerializeOptions>,
 ): Uint8Array {
-    const serializers: SerializerFunction[] =
-        (options?.serializers ? options.serializers : []).concat(
-            uInt8ArraySerializer,
-        );
-
-    const sanitizedOptions = { ...options, serializers };
-
-    const { value: serializedValue, stringDatabase } = serialize(
-        value,
-        sanitizedOptions,
+  const serializers: SerializerFunction[] =
+    (options?.serializers ? options.serializers : []).concat(
+      uInt8ArraySerializer,
     );
 
-    if (stringDatabase.isEmpty()) {
-        return serializedValue;
-    }
+  const sanitizedOptions = { ...options, serializers };
 
-    const { value: serializedStringDatabase } = serialize(
-        stringDatabase,
-        { ...sanitizedOptions, plainText: true },
-    );
+  const { value: serializedValue, stringDatabase } = serialize(
+    value,
+    sanitizedOptions,
+  );
 
-    return serialize([
-        serializedStringDatabase,
-        serializedValue,
-    ], sanitizedOptions).value;
+  if (stringDatabase.isEmpty()) {
+    return serializedValue;
+  }
+
+  const { value: serializedStringDatabase } = serialize(
+    stringDatabase,
+    { ...sanitizedOptions, plainText: true },
+  );
+
+  return serialize([
+    serializedStringDatabase,
+    serializedValue,
+  ], sanitizedOptions).value;
 }
 
 /**
@@ -90,42 +90,42 @@ export function pack(
  * @returns The unpacked value.
  */
 export function unpack<T>(
-    packed: Uint8Array,
-    options?: Partial<PackOptions & DeserializeOptions>,
+  packed: Uint8Array,
+  options?: Partial<PackOptions & DeserializeOptions>,
 ): T {
-    const deserializers: DeserializeFunction[] =
-        (options?.deserializers ? options.deserializers : []).concat(
-            uInt8ArrayDeserializer,
-        );
-    const sanitizedOptions = { ...options, deserializers };
+  const deserializers: DeserializeFunction[] =
+    (options?.deserializers ? options.deserializers : []).concat(
+      uInt8ArrayDeserializer,
+    );
+  const sanitizedOptions = { ...options, deserializers };
 
-    const { value: unpacked } = deserialize<Uint8Array>(
-        packed,
-        sanitizedOptions,
+  const { value: unpacked } = deserialize<Uint8Array>(
+    packed,
+    sanitizedOptions,
+  );
+
+  if (
+    isArray(unpacked) &&
+    unpacked.length === 2 &&
+    isUint8array(unpacked[0]) &&
+    isUint8array(unpacked[1])
+  ) {
+    const [serializedStringDatabase, serializedValue] = unpacked;
+
+    const { value: deserializedStringDatabase } = deserialize<string[]>(
+      serializedStringDatabase,
+      sanitizedOptions,
     );
 
-    if (
-        isArray(unpacked) &&
-        unpacked.length === 2 &&
-        isUint8array(unpacked[0]) &&
-        isUint8array(unpacked[1])
-    ) {
-        const [serializedStringDatabase, serializedValue] = unpacked;
+    const stringDatabase = new Database<string>(deserializedStringDatabase);
 
-        const { value: deserializedStringDatabase } = deserialize<string[]>(
-            serializedStringDatabase,
-            sanitizedOptions,
-        );
+    const { value } = deserialize<T>(serializedValue, {
+      stringDatabase,
+      ...sanitizedOptions,
+    });
 
-        const stringDatabase = new Database<string>(deserializedStringDatabase);
+    return value;
+  }
 
-        const { value } = deserialize<T>(serializedValue, {
-            stringDatabase,
-            ...sanitizedOptions,
-        });
-
-        return value;
-    }
-
-    return unpacked as T;
+  return unpacked as T;
 }
