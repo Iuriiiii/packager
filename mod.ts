@@ -38,6 +38,16 @@ export interface PackOptions {
   valueKeyName: string;
 }
 
+/**
+ * Pack a value into a Uint8Array. If the value contains strings, it will also
+ * serialize a string database and return a Uint8Array containing the
+ * serialized string database and the serialized value.
+ *
+ * @param value The value to pack.
+ * @param options Options to pass to the serializer and the packer.
+ *
+ * @returns A Uint8Array containing the packed value.
+ */
 export function pack(
   value: unknown,
   options?: Partial<PackOptions & SerializeOptions>,
@@ -69,6 +79,16 @@ export function pack(
   ], sanitizedOptions).value;
 }
 
+/**
+ * Unpack a Uint8Array into a value. If the Uint8Array contains a string
+ * database, it will also deserialize the string database and return the
+ * deserialized value.
+ *
+ * @param packed The Uint8Array containing the packed value.
+ * @param options Options to pass to the deserializer and the unpacker.
+ *
+ * @returns The unpacked value.
+ */
 export function unpack<T>(
   packed: Uint8Array,
   options?: Partial<PackOptions & DeserializeOptions>,
