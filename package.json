@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@inspatial/test": "npm:@jsr/inspatial__test@^0.0.7",
+    "@online/is": "npm:@jsr/online__is",
+    "@online/tinyserializer": "npm:@jsr/online__tinyserializer",
+    "@online/tinyserializers": "npm:@jsr/online__tinyserializers",
+    "@std/assert": "npm:@jsr/std__assert"
+  }
+}
