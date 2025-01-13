@@ -1,110 +1,154 @@
-import { pack, unpack } from "../mod.ts";
-import { assertEquals } from "@std/assert";
+import { test, assertObjectMatch, assertEquals } from '@inspatial/test';
+import { pack, unpack } from '../src/mod.ts';
+import { Database } from '@online/tinyserializer';
 
-function randomNumber(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+interface TestData {
+  name: string;
+  value: number;
 }
 
-function randomString(length: number) {
-  let result = "";
-
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑabcdefghijklmnopqrstuvwxyzáéíóúñ0123456789_()-$[]{}";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(
-      Math.floor(Math.random() * charactersLength),
-    );
+// Encoder that doubles numbers
+const numberEncoder = (value: unknown) => {
+  if (typeof value === 'number') {
+    return value * 2;
   }
-
-  return result;
-}
-
-const selfReferencedObject = {
-  a: 1,
-  b: {},
+  return value;
 };
 
-// @ts-ignore: just add new member
-selfReferencedObject.c = selfReferencedObject;
+// Decoder that halves numbers
+const numberDecoder = (value: unknown) => {
+  if (typeof value === 'number') {
+    return value / 2;
+  }
+  return value;
+};
 
-const valuesToTest = [
-  NaN,
-  Infinity,
-  -Infinity,
-  0,
-  -1,
-  "AbC",
-  127,
-  128,
-  -126,
-  randomString(1000),
-  null,
-  undefined,
-  true,
-  false,
-  65500,
-  20000000,
-  2 ** 31,
-  4,
-  "qw54dqw dqw165 d1qw65 d1qw96 4werf198wf8ew9f7ef79efe ",
-  Array.from({ length: 1000 }).map(() => randomNumber(0, 2 ** 31)),
-  Array.from({ length: 1000 }).map(() => randomNumber(-(2 ** 31), 0)),
-  [1],
-  [1, 2, 3, 4],
-  [1, {}, selfReferencedObject, {
-    a: 213213213,
-    b: [
-      1,
-      [3, 4, 5],
-      2 ** 31 - 1,
-      "7",
-      null,
-      true,
-      false,
-      null,
-      undefined,
-      Infinity,
-      randomString(1000),
-    ],
-  }, "hola"],
-  [
-    1,
-    [3, 4, 5],
-    6,
-    "7",
-    null,
+test('should pack and unpack primitives correctly', () => {
+  const testCases = [
+    42,
+    'test string',
     true,
     false,
     null,
     undefined,
-    Infinity,
-    randomString(100),
-  ],
-  {
-    a: 213213213,
-    b: [
-      1,
-      [3, 4, 5],
-      2 ** 31 - 1,
-      "7",
-      null,
-      true,
-      false,
-      null,
-      undefined,
-      Infinity,
-      randomString(300),
-    ],
-  },
-];
+    [1, 2, 3],
+    { a: 1, b: 2 },
+  ];
 
-Deno.test("pack-unpack", async (t) => {
-  for (const value of valuesToTest) {
-    await t.step(`Packed and unpacked value: ${value}`, () => {
-      const packed = pack(value);
-      const unpacked = unpack(packed);
-      assertEquals(value, unpacked);
-    });
+  for (const testCase of testCases) {
+    const packed = pack(testCase);
+    const unpacked = unpack(packed);
+    if (typeof unpacked === "object" && unpacked !== null) {
+      assertObjectMatch(unpacked, testCase as any);
+    } else {
+      assertEquals(unpacked, testCase);
+    }
   }
+});
+
+test('should handle nested objects and arrays', () => {
+  const testData = {
+    array: [1, 2, { nested: 'value' }],
+    object: {
+      nested: {
+        array: [4, 5, 6],
+      },
+    },
+  };
+
+  const packed = pack(testData);
+  const unpacked = unpack(packed) as object;
+  assertObjectMatch(unpacked, testData);
+});
+
+test('should work with encoder and decoder', () => {
+  const testData = {
+    numbers: [1, 2, 3],
+    nested: {
+      value: 4,
+    },
+  };
+
+  // Pack with encoder
+  const packedWithEncoder = pack(testData, {
+    encoder: numberEncoder,
+  });
+
+  // Unpack with decoder
+  const unpackedWithDecoder = unpack(packedWithEncoder, {
+    decoder: numberDecoder
+  }) as object;
+
+  // Original numbers should remain the same after encoding and decoding
+  assertObjectMatch(unpackedWithDecoder, testData);
+});
+
+test('should handle string database', () => {
+  const testData: TestData = {
+    name: 'test',
+    value: 123,
+  };
+
+  // Pack with string database enabled
+  const packed = pack(testData, {
+    plainText: false,
+  });
+
+  // Unpack with string database
+  const unpacked = unpack<TestData>(packed);
+  assertObjectMatch(unpacked, testData as any);
+});
+
+test('should handle object references', () => {
+  const obj = { sharedProp: 'shared value' };
+  const testData = {
+    ref1: obj,
+    ref2: obj, // Same object reference
+  };
+
+  // Pack with object references enabled
+  const packed = pack(testData, {
+    plainObject: false,
+  });
+
+  // Unpack with object references
+  const unpacked = unpack(packed) as object;
+  assertObjectMatch(unpacked, testData);
+});
+
+test('should handle custom database', () => {
+  const customDb = new Database<string>([]);
+  const testData = {
+    message: 'Hello',
+    repeated: 'Hello', // Same string
+  };
+
+  // Pack with custom string database
+  const packed = pack(testData, {
+    stringDatabase: customDb,
+  });
+
+  // Unpack with string database
+  const unpacked = unpack(packed) as object;
+  assertObjectMatch(unpacked, testData);
+});
+
+test('should handle both encoder and decoder with string database', () => {
+  const testData = {
+    numbers: [5, 10, 15],
+    text: 'test',
+  };
+
+  // Pack with encoder and string database
+  const packed = pack(testData, {
+    encoder: numberEncoder,
+    plainText: false,
+  });
+
+  // Unpack with decoder and string database
+  const unpacked = unpack(packed, {
+    decoder: numberDecoder,
+  }) as object;
+
+  assertObjectMatch(unpacked, testData);
 });

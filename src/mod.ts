@@ -1,8 +1,6 @@
 import type {
-  Decoder,
   DeserializeFunction,
   DeserializeOptions,
-  Encoder,
   RequireAtLeastOne,
   SerializedClass,
   SerializeOptions,
@@ -21,6 +19,7 @@ import {
 } from "@online/tinyserializers";
 import { isUint8array } from "./validators/mod.ts";
 import { isArray } from "@online/is";
+import type { Encoder, Decoder } from "./types/mod.ts";
 
 export type {
   Decoder,
@@ -32,10 +31,20 @@ export type {
 };
 export { Serializable, SerializableClass };
 
-export interface PackOptions {
-  stringDatabaseKeyName: string;
-  objectDatabaseKeyName: string;
-  valueKeyName: string;
+export interface PackOptions extends SerializeOptions {
+  /**
+   * The encoder to use when serializing values.
+   * It is triggered before the value is serialized.
+   */
+  encoder: Encoder;
+}
+
+export interface UnpackOptions extends DeserializeOptions {
+  /**
+   * The decoder to use when deserializing values.
+   * It is triggered after the value is deserialized.
+   */
+  decoder: Decoder;
 }
 
 /**
@@ -50,17 +59,18 @@ export interface PackOptions {
  */
 export function pack(
   value: unknown,
-  options?: Partial<PackOptions & SerializeOptions>,
+  options?: Partial<PackOptions>,
 ): Uint8Array {
+  const serializableValue = options?.encoder ? options.encoder(value) : value;
   const serializers: SerializerFunction[] =
-    (options?.serializers ? options.serializers : []).concat(
+    (options?.serializers ?? []).concat(
       uInt8ArraySerializer,
     );
 
   const sanitizedOptions = { ...options, serializers };
 
   const { value: serializedValue, stringDatabase } = serialize(
-    value,
+    serializableValue,
     sanitizedOptions,
   );
 
@@ -91,10 +101,10 @@ export function pack(
  */
 export function unpack<T>(
   packed: Uint8Array,
-  options?: Partial<PackOptions & DeserializeOptions>,
+  options?: Partial<UnpackOptions>,
 ): T {
   const deserializers: DeserializeFunction[] =
-    (options?.deserializers ? options.deserializers : []).concat(
+    (options?.deserializers ?? []).concat(
       uInt8ArrayDeserializer,
     );
   const sanitizedOptions = { ...options, deserializers };
@@ -124,8 +134,8 @@ export function unpack<T>(
       ...sanitizedOptions,
     });
 
-    return value;
+    return options?.decoder ? options.decoder(value) : value;
   }
 
-  return unpacked as T;
+  return options?.decoder ? options.decoder(unpacked) : unpacked as T;
 }
