@@ -39,6 +39,7 @@ test("should pack and unpack primitives correctly", () => {
     const packed = pack(testCase);
     const unpacked = unpack(packed);
     if (typeof unpacked === "object" && unpacked !== null) {
+      // deno-lint-ignore no-explicit-any
       assertObjectMatch(unpacked, testCase as any);
     } else {
       assertEquals(unpacked, testCase);
@@ -96,6 +97,7 @@ test("should handle string database", () => {
 
   // Unpack with string database
   const unpacked = unpack<TestData>(packed);
+  // deno-lint-ignore no-explicit-any
   assertObjectMatch(unpacked, testData as any);
 });
 
