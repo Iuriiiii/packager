@@ -1,6 +1,6 @@
 import { assertEquals, assertObjectMatch, test } from "@inspatial/test";
 import { pack, unpack } from "../src/mod.ts";
-import { Database } from "../../tinyserializer/mod.ts";
+import { Database } from "@online/tinyserializer";
 
 interface TestData {
   name: string;
