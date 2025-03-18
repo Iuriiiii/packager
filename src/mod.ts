@@ -5,21 +5,21 @@ import type {
   SerializedClass,
   SerializeOptions,
   SerializerFunction,
-} from "@online/tinyserializer/types";
-import { SerializableClass } from "@online/tinyserializer/types";
+} from "../../tinyserializer/types.ts";
+import { SerializableClass } from "../../tinyserializer/types.ts";
 import {
   Database,
   deserialize,
   Serializable,
   serialize,
-} from "@online/tinyserializer";
+} from "../../tinyserializer/mod.ts";
 import {
   uInt8ArrayDeserializer,
   uInt8ArraySerializer,
 } from "@online/tinyserializers";
 import { isUint8array } from "./validators/mod.ts";
 import { isArray } from "@online/is";
-import type { Encoder, Decoder } from "./types/mod.ts";
+import type { Decoder, Encoder } from "./types/mod.ts";
 
 export type {
   Decoder,
@@ -62,10 +62,9 @@ export function pack(
   options?: Partial<PackOptions>,
 ): Uint8Array {
   const serializableValue = options?.encoder ? options.encoder(value) : value;
-  const serializers: SerializerFunction[] =
-    (options?.serializers ?? []).concat(
-      uInt8ArraySerializer,
-    );
+  const serializers: SerializerFunction[] = (options?.serializers ?? []).concat(
+    uInt8ArraySerializer,
+  );
 
   const sanitizedOptions = { ...options, serializers };
 
@@ -103,8 +102,8 @@ export function unpack<T>(
   packed: Uint8Array,
   options?: Partial<UnpackOptions>,
 ): T {
-  const deserializers: DeserializeFunction[] =
-    (options?.deserializers ?? []).concat(
+  const deserializers: DeserializeFunction[] = (options?.deserializers ?? [])
+    .concat(
       uInt8ArrayDeserializer,
     );
   const sanitizedOptions = { ...options, deserializers };
