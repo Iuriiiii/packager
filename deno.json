@@ -12,5 +12,6 @@
     "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.x",
     "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.x",
     "@std/assert": "jsr:@std/assert@^1.0.x"
-  }
+  },
+  "nodeModulesDir": "auto"
 }
