@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { test, assertEquals, assertObjectMatch } from "@inspatial/test";
+import { assertEquals, assertObjectMatch, test } from "@inspatial/test";
 import { pack, unpack } from "../src/mod.ts";
 
 test("pack and unpack with default encoder/decoder", () => {

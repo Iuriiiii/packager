@@ -1,6 +1,6 @@
-import { test, assertObjectMatch, assertEquals } from '@inspatial/test';
-import { pack, unpack } from '../src/mod.ts';
-import { Database } from '@online/tinyserializer';
+import { assertEquals, assertObjectMatch, test } from "@inspatial/test";
+import { pack, unpack } from "../src/mod.ts";
+import { Database } from "@online/tinyserializer";
 
 interface TestData {
   name: string;
@@ -9,7 +9,7 @@ interface TestData {
 
 // Encoder that doubles numbers
 const numberEncoder = (value: unknown) => {
-  if (typeof value === 'number') {
+  if (typeof value === "number") {
     return value * 2;
   }
   return value;
@@ -17,16 +17,16 @@ const numberEncoder = (value: unknown) => {
 
 // Decoder that halves numbers
 const numberDecoder = (value: unknown) => {
-  if (typeof value === 'number') {
+  if (typeof value === "number") {
     return value / 2;
   }
   return value;
 };
 
-test('should pack and unpack primitives correctly', () => {
+test("should pack and unpack primitives correctly", () => {
   const testCases = [
     42,
-    'test string',
+    "test string",
     true,
     false,
     null,
@@ -39,6 +39,7 @@ test('should pack and unpack primitives correctly', () => {
     const packed = pack(testCase);
     const unpacked = unpack(packed);
     if (typeof unpacked === "object" && unpacked !== null) {
+      // deno-lint-ignore no-explicit-any
       assertObjectMatch(unpacked, testCase as any);
     } else {
       assertEquals(unpacked, testCase);
@@ -46,9 +47,9 @@ test('should pack and unpack primitives correctly', () => {
   }
 });
 
-test('should handle nested objects and arrays', () => {
+test("should handle nested objects and arrays", () => {
   const testData = {
-    array: [1, 2, { nested: 'value' }],
+    array: [1, 2, { nested: "value" }],
     object: {
       nested: {
         array: [4, 5, 6],
@@ -61,7 +62,7 @@ test('should handle nested objects and arrays', () => {
   assertObjectMatch(unpacked, testData);
 });
 
-test('should work with encoder and decoder', () => {
+test("should work with encoder and decoder", () => {
   const testData = {
     numbers: [1, 2, 3],
     nested: {
@@ -76,16 +77,16 @@ test('should work with encoder and decoder', () => {
 
   // Unpack with decoder
   const unpackedWithDecoder = unpack(packedWithEncoder, {
-    decoder: numberDecoder
+    decoder: numberDecoder,
   }) as object;
 
   // Original numbers should remain the same after encoding and decoding
   assertObjectMatch(unpackedWithDecoder, testData);
 });
 
-test('should handle string database', () => {
+test("should handle string database", () => {
   const testData: TestData = {
-    name: 'test',
+    name: "test",
     value: 123,
   };
 
@@ -96,11 +97,12 @@ test('should handle string database', () => {
 
   // Unpack with string database
   const unpacked = unpack<TestData>(packed);
+  // deno-lint-ignore no-explicit-any
   assertObjectMatch(unpacked, testData as any);
 });
 
-test('should handle object references', () => {
-  const obj = { sharedProp: 'shared value' };
+test("should handle object references", () => {
+  const obj = { sharedProp: "shared value" };
   const testData = {
     ref1: obj,
     ref2: obj, // Same object reference
@@ -116,11 +118,11 @@ test('should handle object references', () => {
   assertObjectMatch(unpacked, testData);
 });
 
-test('should handle custom database', () => {
+test("should handle custom database", () => {
   const customDb = new Database<string>([]);
   const testData = {
-    message: 'Hello',
-    repeated: 'Hello', // Same string
+    message: "Hello",
+    repeated: "Hello", // Same string
   };
 
   // Pack with custom string database
@@ -133,10 +135,10 @@ test('should handle custom database', () => {
   assertObjectMatch(unpacked, testData);
 });
 
-test('should handle both encoder and decoder with string database', () => {
+test("should handle both encoder and decoder with string database", () => {
   const testData = {
     numbers: [5, 10, 15],
-    text: 'test',
+    text: "test",
   };
 
   // Pack with encoder and string database
