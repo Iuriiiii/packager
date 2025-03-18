@@ -5,14 +5,14 @@ import type {
   SerializedClass,
   SerializeOptions,
   SerializerFunction,
-} from "../../tinyserializer/types.ts";
-import { SerializableClass } from "../../tinyserializer/types.ts";
+} from "@online/tinyserializer/types";
+import { SerializableClass } from "@online/tinyserializer/types";
 import {
   Database,
   deserialize,
   Serializable,
   serialize,
-} from "../../tinyserializer/mod.ts";
+} from "@online/tinyserializer";
 import {
   uInt8ArrayDeserializer,
   uInt8ArraySerializer,
