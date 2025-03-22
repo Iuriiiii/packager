@@ -1,6 +1,7 @@
 # Packager
 
-A lightweight and efficient binary serialization library for JavaScript/TypeScript that handles complex data structures and custom types.
+A lightweight and efficient binary serialization library for
+JavaScript/TypeScript that handles complex data structures and custom types.
 
 ## Features
 
@@ -31,7 +32,7 @@ import { pack, unpack } from "@online/packager";
 const data = {
   name: "John",
   age: 30,
-  scores: [95, 87, 91]
+  scores: [95, 87, 91],
 };
 
 const packed = pack(data);
@@ -45,10 +46,16 @@ console.log(unpacked);
 
 ### Using Custom Encoders/Decoders
 
-You can transform values during serialization/deserialization using custom encoders and decoders:
+You can transform values during serialization/deserialization using custom
+encoders and decoders:
 
 ```typescript
-import { pack, unpack, type PackOptions, type UnpackOptions } from "@online/packager";
+import {
+  pack,
+  type PackOptions,
+  unpack,
+  type UnpackOptions,
+} from "@online/packager";
 
 const packOptions: PackOptions = {
   encoder: (value) => {
@@ -57,7 +64,7 @@ const packOptions: PackOptions = {
       return value.toISOString();
     }
     return value;
-  }
+  },
 };
 
 const unpackOptions: UnpackOptions = {
@@ -67,12 +74,12 @@ const unpackOptions: UnpackOptions = {
       return new Date(value);
     }
     return value;
-  }
+  },
 };
 
 const data = {
   name: "Event",
-  date: new Date("2024-01-13")
+  date: new Date("2024-01-13"),
 };
 
 const packed = pack(data, packOptions);
@@ -89,7 +96,7 @@ import { pack, unpack } from "@online/packager";
 const binaryData = new Uint8Array([1, 2, 3, 4]);
 const data = {
   id: "doc-123",
-  content: binaryData
+  content: binaryData,
 };
 
 const packed = pack(data);
@@ -104,6 +111,7 @@ const unpacked = unpack(packed);
 Serializes any JavaScript value into a Uint8Array.
 
 Options:
+
 - `encoder`: Function to transform values before serialization
 - `plainText`: If true, disables string deduplication
 - `plainObject`: If true, disables object reference tracking
@@ -115,6 +123,7 @@ Options:
 Deserializes a packed Uint8Array back into its original value.
 
 Options:
+
 - `decoder`: Function to transform values after deserialization
 - `objectDatabase`: Custom object database for reference tracking
 - `stringDatabase`: Custom string database for deduplication

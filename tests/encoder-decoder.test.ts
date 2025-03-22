@@ -1,4 +1,4 @@
-import { test, assertEquals, assertObjectMatch } from "@inspatial/test";
+import { assertEquals, assertObjectMatch, test } from "@inspatial/test";
 import { pack, Serializable, SerializableClass, unpack } from "../src/mod.ts";
 
 // Helper function to create circular reference objects
@@ -182,7 +182,7 @@ test("encoder handles circular references", () => {
 
   const packed = pack(obj, { encoder });
   const unpacked = unpack(packed);
-  const ref = (unpacked as Record<string, unknown>);
+  const ref = unpacked as Record<string, unknown>;
 
   assertEquals(
     ref.self,
@@ -261,7 +261,7 @@ test("encoder and decoder work together for complex transformations", () => {
     }
 
     if (Array.isArray(v)) {
-      return v.map(item => encoder(item));
+      return v.map((item) => encoder(item));
     }
 
     if (v instanceof Date) {
@@ -291,7 +291,7 @@ test("encoder and decoder work together for complex transformations", () => {
     }
 
     if (Array.isArray(v)) {
-      return v.map(item => decoder(item));
+      return v.map((item) => decoder(item));
     }
 
     if ("type" in v && "value" in v) {
@@ -329,14 +329,14 @@ test("encoder and decoder work together for complex transformations", () => {
   assertEquals((result.date as Date).toISOString(), data.date.toISOString());
   assertEquals(
     Array.from((result.map as Map<string, string>).entries()),
-    Array.from(data.map.entries())
+    Array.from(data.map.entries()),
   );
   assertEquals(
     Array.from((result.set as Set<number>).values()),
-    Array.from(data.set.values())
+    Array.from(data.set.values()),
   );
   assertEquals(
     (result.instance as TestClass).value,
-    data.instance.value
+    data.instance.value,
   );
 });
