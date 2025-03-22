@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { assertEquals, assertObjectMatch, test } from "@inspatial/test";
 import { pack, unpack } from "../src/mod.ts";
 import { Database } from "@online/tinyserializer";
