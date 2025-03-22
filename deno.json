@@ -10,7 +10,7 @@
     "@inspatial/test": "jsr:@inspatial/test@^0.0.8",
     "@online/is": "jsr:@online/is@^0.0.3",
     "@online/tinyserializer": "jsr:@online/tinyserializer@^0.0.26",
-    "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.x",
+    "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.8",
     "@std/assert": "jsr:@std/assert@^1.0.10"
   },
   "nodeModulesDir": "auto"
