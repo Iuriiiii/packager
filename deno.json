@@ -1,6 +1,6 @@
 {
   "name": "@online/packager",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "exports": "./mod.ts",
   "tasks": {
     "test": "clear && deno test && bun test && npx tsx --test ./tests/*.test.ts",
